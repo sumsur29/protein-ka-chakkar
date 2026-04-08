@@ -3,7 +3,7 @@ const MESSAGES = require("./messages");
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const TG_GROUP = "https://t.me/protein_hi_protein";
-const TRACKER_URL = "https://protein-tracker.vercel.app";
+const TRACKER_URL = "https://protein-tracker-one.vercel.app";
 
 // ============ TELEGRAM HELPERS ============
 async function sendMessage(chatId, text, opts = {}) {

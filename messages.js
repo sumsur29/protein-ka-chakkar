@@ -598,7 +598,7 @@ Total: ___g
 
 Pehli baar track karoge toh shock lagega — itna kam kha rahe the! 😱
 
-Protein Tracker app use karo: protein-tracker.vercel.app 📱` },
+Protein Tracker app use karo: protein-tracker-one.vercel.app 📱` },
 
   { day: 58, title: "Consistency > perfection", cat: "motivation", msg: `🔑 Ek din 100g protein khaana < Roz 60g protein khaana
 
@@ -904,7 +904,7 @@ Aap certified Protein Expert hain (self-certified, but still! 😄)
 
   { day: 85, title: "Aage kya?", cat: "tip", msg: `🚀 90 din ke baad kya?
 
-1. Track karte raho — protein-tracker.vercel.app
+1. Track karte raho — protein-tracker-one.vercel.app
 2. Naye foods try karo — boring mat hone do
 3. Family ko involve karo
 4. Seasonal changes karo
@@ -964,7 +964,7 @@ Remember:
 📊 Track karo, improve karo
 
 Community mein active raho: t.me/protein_hi_protein
-Tracker use karo: protein-tracker.vercel.app
+Tracker use karo: protein-tracker-one.vercel.app
 
 Thank you for this journey! 🙏🇮🇳
 

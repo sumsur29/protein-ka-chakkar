@@ -859,7 +859,7 @@ Ek friend ya family member ko is bot ke baare mein batao.
 Protein awareness = chain reaction.
 Aap batao unko, wo batayein unke ghar mein! 📤
 
-t.me/protein_ka_chakkar ← ye link share karo! 🙏` },
+t.me/protein_hi_protein ← ye link share karo! 🙏` },
 
   // FINAL 10 DAYS
   { day: 81, title: "Your protein cheat sheet", cat: "tip", msg: `📋 SAVE THIS! Your protein cheat sheet:
@@ -908,7 +908,7 @@ Aap certified Protein Expert hain (self-certified, but still! 😄)
 2. Naye foods try karo — boring mat hone do
 3. Family ko involve karo
 4. Seasonal changes karo
-5. Community mein active raho: t.me/protein_ka_chakkar
+5. Community mein active raho: t.me/protein_hi_protein
 
 Protein journey lifetime hai, 90 din nahi! 🔑` },
 
@@ -963,7 +963,7 @@ Remember:
 👨‍👩‍👧‍👦 Family ke liye plan banao
 📊 Track karo, improve karo
 
-Community mein active raho: t.me/protein_ka_chakkar
+Community mein active raho: t.me/protein_hi_protein
 Tracker use karo: protein-tracker.vercel.app
 
 Thank you for this journey! 🙏🇮🇳

@@ -1,5 +1,6 @@
 // Protein Ka Chakkar — Telegram Bot v2
 const MESSAGES = require("./messages");
+const RECIPES = require("./recipes");
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const TG_GROUP = "https://t.me/protein_hi_protein";
@@ -236,49 +237,6 @@ const PROTEIN_DB = {
   "chicken shawarma": { protein: 22, cal: 420, serving: "1 roll", veg: false },
 };
 
-// ============ RECIPES ============
-const RECIPES = [
-  // === BREAKFAST (1-8) ===
-  { name: "Paneer Bhurji", emoji: "🍳", protein: 18, time: "10 min", recipe: `<b>🍳 Paneer Bhurji — 18g protein</b>\n\n100g paneer crumble karo\nPyaaz, tamatar, hari mirch bhuno\nPaneer daal do, masala mix karo\n5 min mein ready!\n\n<b>2 roti ke saath = 24g protein 💪</b>` },
-  { name: "Moong Dal Chilla", emoji: "🥞", protein: 12, time: "15 min", recipe: `<b>🥞 Moong Dal Chilla — 12g protein</b>\n\nBhigi moong dal grind karo\nPyaaz + mirch + namak mix karo\nTawa pe dosa jaisa banao\n\n<b>2 chille + dahi = 20g protein nashta! 🌅</b>` },
-  { name: "Besan Chilla", emoji: "🥞", protein: 10, time: "10 min", recipe: `<b>🥞 Besan Chilla — 10g protein</b>\n\nBesan + paani ka batter\nPyaaz + mirch + dhaniya + ajwain\nTawa pe dosa jaisa seko\n\n<b>Nashte ka champion! 🏆</b>` },
-  { name: "Overnight Protein Oats", emoji: "🥣", protein: 18, time: "5 min prep", recipe: `<b>🥣 Overnight Protein Oats — 18g protein</b>\n\nOats + doodh/dahi + PB + banana + chia seeds\nRaat ko mix karo, fridge mein rakh do\nSubah seedha khaao!\n\n<b>Zero cooking, 2 min morning! ⚡</b>` },
-  { name: "Paneer Paratha", emoji: "🫓", protein: 14, time: "20 min", recipe: `<b>🫓 Paneer Paratha — 14g protein</b>\n\n50g paneer mash karo\nHari mirch, dhaniya, namak, jeera mix karo\nAata mein bharke paratha belke seko\nGhee/butter lagao\n\n<b>1 paratha + dahi = 22g protein breakfast! 🌅</b>` },
-  { name: "Egg Bhurji Toast", emoji: "🍳", protein: 16, time: "7 min", recipe: `<b>🍳 Egg Bhurji Toast — 16g protein</b>\n\n2 eggs crack karo, pyaaz-mirch ke saath scramble\nToast pe daal do\nChaat masala chidko\n\n<b>7 min mein 16g protein — fastest breakfast! ⚡</b>` },
-  { name: "Dahi Poha", emoji: "🍚", protein: 12, time: "10 min", recipe: `<b>🍚 Dahi Poha — 12g protein</b>\n\nRegular poha banao (5g)\nServe karte waqt 1 bowl dahi side mein (8g)\nMoongfali zaroor daalo poha mein (+3g)\n\n<b>Regular poha upgrade! Simple but effective 🎯</b>` },
-  { name: "Protein Dosa", emoji: "🥞", protein: 14, time: "15 min", recipe: `<b>🥞 Protein Dosa — 14g protein</b>\n\nRegular dosa batter mein 2 tbsp besan mix karo\nDosa banao, andar paneer bhurji filling daalo (50g paneer)\nFold karo\n\n<b>South Indian + North Indian fusion! 🤝</b>` },
-
-  // === LUNCH (9-16) ===
-  { name: "Soya Keema", emoji: "🟤", protein: 26, time: "20 min", recipe: `<b>🟤 Soya Keema — 26g protein</b>\n\nSoya chunks ubaal ke squeeze karo\nMixer mein rough grind karo\nPyaaz-tamatar gravy banao\nSoya keema daal ke 5 min bhuno\n\n<b>Pav ya roti ke saath — guests ko pata nahi chalega! 🤫</b>` },
-  { name: "Rajma Chawal Combo", emoji: "🫘", protein: 26, time: "30 min", recipe: `<b>🫘 Rajma Chawal Protein Combo — 26g protein</b>\n\nRajma curry banao (9g)\nChawal ke saath serve karo (4g)\nSide mein dahi ka bowl (8g)\nChaach bhi rakh lo (5g)\n\n<b>Regular rajma chawal + sides = protein powerhouse! 💪</b>` },
-  { name: "Chole Kulche", emoji: "🫘", protein: 16, time: "25 min", recipe: `<b>🫘 Protein Chole — 16g protein</b>\n\nBoiled chane mein extra chana dal bhi daalo\nPyaaz-tamatar gravy, garam masala, dhaniya\n2 kulche ya roti ke saath\n\n<b>Street food vibes, ghar ka protein! 🎉</b>` },
-  { name: "Paneer Tikka Wrap", emoji: "🌯", protein: 22, time: "15 min", recipe: `<b>🌯 Paneer Tikka Wrap — 22g protein</b>\n\nPaneer cubes (100g) tikka masala mein marinate karo\nTawa pe grill karo ya air fry\nRoti mein wrap karo + pyaaz + chutney\n\n<b>Lunch box hero! 🏆</b>` },
-  { name: "Dal + Paneer Bowl", emoji: "🥣", protein: 21, time: "25 min", recipe: `<b>🥣 Dal Paneer Bowl — 21g protein</b>\n\nDal banao (7g)\nUsmein 50g paneer cubes daal do (7g)\nSide mein dahi (8g)\n\n<b>Simple trick — dal mein paneer = double protein! 🧠</b>` },
-  { name: "Soya Chunk Biryani", emoji: "🍚", protein: 30, time: "35 min", recipe: `<b>🍚 Soya Chunk Biryani — 30g protein</b>\n\nSoya chunks ubaal ke squeeze karo (26g)\nRegular biryani masala mein pakao\nChawal ke saath layer karo, dum do\nRaita side mein (4g)\n\n<b>Vegetarian biryani with 30g protein! 🤯</b>` },
-  { name: "Rajma Burrito Bowl", emoji: "🥗", protein: 14, time: "15 min", recipe: `<b>🥗 Rajma Burrito Bowl — 14g protein</b>\n\nRice base + garam rajma + shredded cabbage\nDahi + chaat masala + cheese\n\n<b>Rajma chawal ka international avatar! 🌯</b>` },
-  { name: "Protein Khichdi", emoji: "🍚", protein: 18, time: "25 min", recipe: `<b>🍚 Protein Khichdi — 18g protein</b>\n\nMoong dal + chawal + thoda chana dal bhi daalo\nHaldi, ghee, jeera tadka\nDahi side mein (8g)\n\n<b>Comfort food + protein bomb! India ka superfood 🇮🇳</b>` },
-
-  // === DINNER (17-22) ===
-  { name: "Palak Paneer", emoji: "🥬", protein: 16, time: "25 min", recipe: `<b>🥬 Palak Paneer — 16g protein</b>\n\nPalak blanch + grind karo\nPyaaz-tamatar masala banao\nPalak puree + paneer cubes (100g) daal do\nCream optional\n\n<b>Dinner classic — 2 roti ke saath = 22g! 🌙</b>` },
-  { name: "Tofu Stir Fry", emoji: "🟨", protein: 14, time: "12 min", recipe: `<b>🟨 Tofu Stir Fry — 14g protein</b>\n\n150g firm tofu cube karo\nHigh heat pe sear karo till golden\nSoy sauce + vinegar + mirch + vegetables\n5 min mein ready\n\n<b>Indo-Chinese style — quick aur tasty! 🥢</b>` },
-  { name: "Chana Masala Dry", emoji: "🫘", protein: 12, time: "20 min", recipe: `<b>🫘 Sukha Chana — 12g protein</b>\n\nBoiled chane bhuno pyaaz-masala mein\nDry rakhein — gravy mat banao\nNimbu + dhaniya + chaat masala\n\n<b>Side dish ya snack — dono kaam! Roti ke saath zabardast 👌</b>` },
-  { name: "Egg Curry", emoji: "🥘", protein: 18, time: "20 min", recipe: `<b>🥘 Egg Curry — 18g protein</b>\n\n3 eggs boil karo\nPyaaz-tamatar masala banao\nAnde daal do, 5 min simmer\nDhaniya daalo\n\n<b>3 ande ka curry + 1 roti = 21g protein dinner! 🌙</b>` },
-  { name: "Mixed Dal Tadka", emoji: "🥣", protein: 10, time: "25 min", recipe: `<b>🥣 Mixed Dal Tadka — 10g protein</b>\n\nMoong + masoor + toor — teen dal mix karo\nPressure cook 3 whistles\nGhee mein jeera + lahsun + rai ka tadka\n\n<b>3 dal mix = better amino acids + better taste! 🧬</b>` },
-  { name: "Paneer Do Pyaza", emoji: "🧀", protein: 16, time: "20 min", recipe: `<b>🧀 Paneer Do Pyaza — 16g protein</b>\n\nPyaaz double quantity mein — kuch bhuni, kuch kacchi\n100g paneer cubes daal do\nShimla mirch bhi daal sakte ho\n\n<b>Restaurant waala taste, ghar ka protein! 🍽️</b>` },
-
-  // === DRINKS & SHAKES (23-26) ===
-  { name: "Sattu Shake", emoji: "🥤", protein: 20, time: "2 min", recipe: `<b>🥤 Sattu Shake — 20g protein (₹5!)</b>\n\n2 tbsp sattu + 1 glass paani + nimbu + kala namak + jeera\nMix karo, piyo!\n\n<b>India ka OG protein shake! 🇮🇳</b>` },
-  { name: "PB Banana Smoothie", emoji: "🍌", protein: 16, time: "3 min", recipe: `<b>🍌 PB Banana Smoothie — 16g protein</b>\n\n1 glass doodh + 2 tbsp PB + 1 banana + shahad\nMixer mein blend karo — done!\n\n<b>Gym nahi jaate? Sabke liye hai! 💪</b>` },
-  { name: "Dahi Smoothie Bowl", emoji: "🥣", protein: 18, time: "5 min", recipe: `<b>🥣 Dahi Smoothie Bowl — 18g protein</b>\n\n1 cup thick dahi (8g) blend karo banana ke saath\nBowl mein daalo\nUpar: 1 tbsp PB (4g) + granola (3g) + fruits + chia seeds (2g)\n\n<b>Instagram worthy + protein packed! 📸</b>` },
-  { name: "Haldi Doodh Protein", emoji: "🥛", protein: 12, time: "5 min", recipe: `<b>🥛 Protein Haldi Doodh — 12g protein</b>\n\n1 glass garam doodh (8g)\n1 tbsp protein powder mix karo (ya skip karo)\nHaldi + kali mirch + shahad\nBadam 5 pcs kaat ke daalo (4g)\n\n<b>Dadi ka nuskha + protein upgrade! 🙏</b>` },
-
-  // === SNACKS (27-30) ===
-  { name: "Chana Chaat", emoji: "🥗", protein: 10, time: "5 min", recipe: `<b>🥗 Chana Chaat — 10g protein</b>\n\nBoiled chana + pyaaz + tamatar + dhaniya\nNimbu + chaat masala + hari chutney\nMix karo, khaao!\n\n<b>Samose se 3x better! 🎯</b>` },
-  { name: "Sprouts Salad", emoji: "🌱", protein: 9, time: "5 min", recipe: `<b>🌱 Sprouts Salad — 9g protein</b>\n\nSteamed sprouts + kheera + tamatar + pyaaz\nNimbu + chaat masala\n\n<b>Protein cost: ₹3-4. Almost free! 💰</b>` },
-  { name: "PB Banana Roll", emoji: "🥜", protein: 12, time: "3 min", recipe: `<b>🥜 PB Banana Roll — 12g protein</b>\n\nRoti pe 2 tbsp PB lagao (8g)\nBanana slice karo, upar rakh do\nShahad thoda drizzle karo\nRoll karo — done!\n\n<b>3 min, zero cooking, 12g protein! Bachche love karenge 🤤</b>` },
-  { name: "Masala Makhana", emoji: "⚪", protein: 5, time: "5 min", recipe: `<b>⚪ Masala Makhana — 5g protein</b>\n\nGhee mein makhana roast karo 3-4 min\nHaldi + mirch + chaat masala + namak chidko\nThanda hone do — crunchy ho jaayega\n\n<b>Chai ke saath biscuit ki jagah ye khao! 🍵</b>` },
-];
-
 // ============ MYTHS ============
 const MYTHS = [
   { myth: "Protein sirf gym walon ke liye hai", truth: "GALAT! Protein sabke liye hai — bachche, adults, seniors. Gym na jaao toh bhi daily protein chahiye!", emoji: "🏋️" },
@@ -342,23 +300,43 @@ async function handleHelp(chatId) {
   await sendMessage(chatId, `📋 <b>All Commands:</b>\n\n<b>Daily Course:</b>\n/today — Today's tip\n/day 15 — Specific day\n/progress — Your progress\n\n<b>Recipes & Tips:</b>\n/recipes — Recipe list\n/recipe 1 — Full recipe\n/tip — Random hack\n/parenttip — Tips for parents\n\n<b>Lookup:</b>\n/ask paneer — Protein check\n/ask chicken breast\n/ask maggi\n\n<b>Learn:</b>\n/myth — Bust a myth\n\n<b>Track & Share:</b>\n/log — Open tracker\n/share — Share with family\n/stop — Unsubscribe\n\n💬 Community: ${TG_GROUP}`);
 }
 
-async function handleRecipes(chatId) {
+async function handleRecipes(chatId, page) {
   const cats = [
-    { label: "🌅 BREAKFAST", range: [0, 7] },
-    { label: "☀️ LUNCH", range: [8, 15] },
-    { label: "🌙 DINNER", range: [16, 21] },
-    { label: "🥤 DRINKS & SHAKES", range: [22, 25] },
-    { label: "🍿 SNACKS", range: [26, 29] },
+    { label: "🌅 BREAKFAST", id: "breakfast" },
+    { label: "☀️ LUNCH", id: "lunch" },
+    { label: "🌙 DINNER", id: "dinner" },
+    { label: "🥤 DRINKS & SHAKES", id: "drinks" },
+    { label: "🍿 SNACKS", id: "snacks" },
+    { label: "🌍 GLOBAL & FUSION", id: "global" },
   ];
-  let text = `🍳 <b>30 Protein Recipes</b>\n`;
-  for (const cat of cats) {
-    text += `\n<b>${cat.label}</b>\n`;
-    for (let i = cat.range[0]; i <= cat.range[1] && i < RECIPES.length; i++) {
-      const r = RECIPES[i];
-      text += `${i + 1}. ${r.emoji} ${r.name} — ${r.protein}g (${r.time})\n`;
-    }
+
+  // If page specified, show that category
+  if (page && page !== "all") {
+    const cat = cats.find(c => c.id === page);
+    if (!cat) { await sendMessage(chatId, `Category nahi mila. Try: /recipes breakfast, /recipes lunch, /recipes dinner, /recipes drinks, /recipes snacks, /recipes global`); return; }
+    const items = RECIPES.filter(r => r.cat === page);
+    let text = `${cat.label} — ${items.length} recipes\n\n`;
+    items.forEach((r, i) => {
+      const idx = RECIPES.indexOf(r) + 1;
+      text += `${idx}. ${r.emoji} <b>${r.name}</b> — ${r.protein}g (${r.time})\n`;
+    });
+    text += `\n👇 Full recipe: /recipe [number]`;
+    await sendMessage(chatId, text);
+    return;
   }
-  text += `\n👇 Full recipe dekhni hai?\n/recipe [number]\nExample: /recipe 1`;
+
+  // Show overview
+  let text = `🍳 <b>100 Protein Recipes!</b>\n`;
+  for (const cat of cats) {
+    const items = RECIPES.filter(r => r.cat === cat.id);
+    text += `\n<b>${cat.label}</b> (${items.length} recipes)\n`;
+    items.slice(0, 3).forEach(r => {
+      const idx = RECIPES.indexOf(r) + 1;
+      text += `  ${idx}. ${r.emoji} ${r.name} — ${r.protein}g\n`;
+    });
+    if (items.length > 3) text += `  ... aur ${items.length - 3} more → /recipes ${cat.id}\n`;
+  }
+  text += `\n<b>Total: ${RECIPES.length} recipes!</b>\n\n👇 Full recipe: /recipe [number]\n📂 Category: /recipes breakfast`;
   await sendMessage(chatId, text);
 }
 
@@ -451,7 +429,7 @@ async function handleWebhook(body) {
     if (text === "/progress") return handleProgress(chatId);
     if (text === "/stop") return handleStop(chatId);
     if (text === "/share") return handleShare(chatId);
-    if (text === "/recipes") return handleRecipes(chatId);
+    if (text === "/recipes" || text.startsWith("/recipes ")) return handleRecipes(chatId, text.split(" ")[1] || null);
     if (text === "/tip") return handleTip(chatId);
     if (text === "/myth") return handleMyth(chatId);
     if (text === "/parenttip") return handleParentTip(chatId);

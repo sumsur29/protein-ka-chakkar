@@ -1,6 +1,7 @@
 // Protein Ka Chakkar — Telegram Bot v2
 const MESSAGES = require("./messages");
 const RECIPES = require("./recipes");
+const MIDDAY_NUDGES = require("./nudges");
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const TG_GROUP = "https://t.me/protein_hi_protein";
@@ -413,7 +414,7 @@ async function handleStop(chatId) {
 }
 
 async function handleShare(chatId) {
-  await sendWithButtons(chatId, `📤 <b>Share karo!</b>\n\n🤖 Bot: https://t.me/protein_ka_chakkar_bot\n👥 Community: https://t.me/protein_hi_protein\n📱 Tracker: https://protein-tracker-one.vercel.app`, [
+  await sendWithButtons(chatId, `📤 <b>Share karo!</b>\n\n🤖 Bot: @protein_ka_chakkar_bot\n👥 Community: ${TG_GROUP}\n📱 Tracker: ${TRACKER_URL}`, [
     [{ text: "📤 Share", url: `https://t.me/share/url?url=https://t.me/protein_ka_chakkar_bot&text=Roz%20ek%20protein%20tip!%20Recipes,%20myths,%20parent%20tips.%20Free!%20💪🇮🇳` }],
     [{ text: "👥 Community", url: TG_GROUP }],
   ]);
@@ -449,7 +450,18 @@ async function handleWebhook(body) {
   }
 }
 
-// ============ CRON ============
+// ============ EVENING NUDGE MESSAGES ============
+const EVENING_NUDGES = [
+  `🌙 <b>Din khatam ho raha hai!</b>\n\nAaj kitna protein khaaya? Track karo!\n\n📱 https://protein-tracker-one.vercel.app\n\nLog karo before you forget! 📊`,
+  `🌙 <b>Raat ka protein check!</b>\n\nAaj ka target hit hua?\n\nQuick count karo:\nNashta: ___g\nLunch: ___g\nSnack: ___g\nDinner: ___g\n\n📱 Track karo: https://protein-tracker-one.vercel.app 🎯`,
+  `🌙 <b>Protein log time!</b>\n\nDin bhar kya khaaya? Yaad karo aur log karo.\n\n2 min lagenge, lekin data se improvement aata hai!\n\n📱 https://protein-tracker-one.vercel.app\n\nJo measure hota hai wo improve hota hai! 📊`,
+  `🌙 <b>End of day reminder!</b>\n\nAgar aaj protein kam khaaya, koi baat nahi.\nKal se phir try karo! 💪\n\nLekin pehle LOG karo aaj ka:\n📱 https://protein-tracker-one.vercel.app\n\nHonesty = progress! ✅`,
+  `🌙 <b>Quick audit!</b>\n\nAaj ye khaaya?\n✅ Nashte mein protein?\n✅ Lunch mein dal/paneer/chana?\n✅ Snack mein kuch healthy?\n✅ Dinner mein dahi/dal?\n\n4/4 = Champion! 🏆\n3/4 = Great! 👍\n2/4 = Improving! 💪\n1/4 = Kal better hoga! 🌅\n\nTrack karo: https://protein-tracker-one.vercel.app`,
+  `🌙 <b>Protein diary!</b>\n\nAaj ka best protein moment kya tha?\n\n🍳 Accha nashta?\n🥣 Power lunch?\n🥗 Smart snack?\n🧀 Protein-rich dinner?\n\nLog karo, celebrate karo! \n📱 https://protein-tracker-one.vercel.app 🎉`,
+  `🌙 <b>Sone se pehle!</b>\n\nAaj log karo, kal plan karo.\n\n📊 Track today: https://protein-tracker-one.vercel.app\n\nKal ka plan:\n🌅 Nashta: ?\n☀️ Lunch: ?\n🍿 Snack: ?\n🌙 Dinner: ?\n\nPlanning = winning! 🧠`,
+];
+
+// ============ CRON: MORNING (8 AM IST) — Daily 90-day tip ============
 async function sendDailyMessages() {
   const subs = await getSubscribers();
   let sent = 0, err = 0;
@@ -469,16 +481,68 @@ async function sendDailyMessages() {
   return { sent, errors: err, total: Object.keys(subs).length };
 }
 
+// ============ CRON: MIDDAY (1 PM IST) — Tip/parent tip/quiz/hack ============
+async function sendMiddayNudge() {
+  const subs = await getSubscribers();
+  // Pick a nudge based on day of year so it cycles through all 120 without repeating
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  const nudge = MIDDAY_NUDGES[dayOfYear % MIDDAY_NUDGES.length];
+
+  let sent = 0, err = 0;
+  for (const [chatId, sub] of Object.entries(subs)) {
+    if (!sub.active) continue;
+    try {
+      await sendMessage(chatId, nudge.msg);
+      sent++;
+      await new Promise(r => setTimeout(r, 100));
+    } catch (e) { err++; }
+  }
+  return { sent, errors: err, nudgeId: nudge.id, cat: nudge.cat };
+}
+
+// ============ CRON: EVENING (8 PM IST) — Log protein reminder ============
+async function sendEveningNudge() {
+  const subs = await getSubscribers();
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  const nudge = EVENING_NUDGES[dayOfYear % EVENING_NUDGES.length];
+
+  let sent = 0, err = 0;
+  for (const [chatId, sub] of Object.entries(subs)) {
+    if (!sub.active) continue;
+    try {
+      await sendWithButtons(chatId, nudge, [
+        [{ text: "📱 Log Protein Now", url: TRACKER_URL }],
+        [{ text: "👥 Community", url: TG_GROUP }],
+      ]);
+      sent++;
+      await new Promise(r => setTimeout(r, 100));
+    } catch (e) { err++; }
+  }
+  return { sent, errors: err };
+}
+
 // ============ EXPORTS ============
 module.exports.webhook = async (req, res) => {
   if (req.method !== "POST") return res.status(200).json({ ok: true });
   try { await handleWebhook(req.body); } catch (e) { console.error(e); }
   res.status(200).json({ ok: true });
 };
-module.exports.cron = async (req, res) => {
+
+module.exports.cronMorning = async (req, res) => {
   if (process.env.CRON_SECRET && req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) return res.status(401).end();
-  try { const r = await sendDailyMessages(); res.status(200).json({ ok: true, ...r }); } catch (e) { res.status(500).json({ error: e.message }); }
+  try { const r = await sendDailyMessages(); res.status(200).json({ ok: true, type: "morning", ...r }); } catch (e) { res.status(500).json({ error: e.message }); }
 };
+
+module.exports.cronMidday = async (req, res) => {
+  if (process.env.CRON_SECRET && req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) return res.status(401).end();
+  try { const r = await sendMiddayNudge(); res.status(200).json({ ok: true, type: "midday", ...r }); } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
+module.exports.cronEvening = async (req, res) => {
+  if (process.env.CRON_SECRET && req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) return res.status(401).end();
+  try { const r = await sendEveningNudge(); res.status(200).json({ ok: true, type: "evening", ...r }); } catch (e) { res.status(500).json({ error: e.message }); }
+};
+
 module.exports.setup = async (req, res) => {
   const url = `https://${req.headers.host}/api/bot`;
   const r = await fetch(`${API}/setWebhook`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url, allowed_updates: ["message", "callback_query"] }) });

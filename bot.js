@@ -413,7 +413,7 @@ async function handleStop(chatId) {
 }
 
 async function handleShare(chatId) {
-  await sendWithButtons(chatId, `📤 <b>Share karo!</b>\n\n🤖 Bot: @protein_ka_chakkar_bot\n👥 Community: ${TG_GROUP}\n📱 Tracker: ${TRACKER_URL}`, [
+  await sendWithButtons(chatId, `📤 <b>Share karo!</b>\n\n🤖 Bot: https://t.me/protein_ka_chakkar_bot\n👥 Community: https://t.me/protein_hi_protein\n📱 Tracker: https://protein-tracker-one.vercel.app`, [
     [{ text: "📤 Share", url: `https://t.me/share/url?url=https://t.me/protein_ka_chakkar_bot&text=Roz%20ek%20protein%20tip!%20Recipes,%20myths,%20parent%20tips.%20Free!%20💪🇮🇳` }],
     [{ text: "👥 Community", url: TG_GROUP }],
   ]);

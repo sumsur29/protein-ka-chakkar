@@ -2,6 +2,7 @@
 const MESSAGES = require("./messages");
 const RECIPES = require("./recipes");
 const MIDDAY_NUDGES = require("./nudges");
+const PRODUCTS = require("./products");
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const API = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const TG_GROUP = "https://t.me/protein_hi_protein";
@@ -291,14 +292,14 @@ const QUICK_TIPS = [
 async function handleStart(chatId, from) {
   const name = from.first_name || "Friend";
   await upsertSubscriber(chatId.toString(), { chatId: chatId.toString(), name, startDate: new Date().toISOString().slice(0, 10), dayNumber: 0, active: true, joinedAt: new Date().toISOString() });
-  await sendWithButtons(chatId, `🙏 <b>Namaste ${name}!</b>\n\nWelcome to <b>Protein Ka Chakkar</b> 💪\n\nHar subah ek protein tip — desi recipes, facts, smart swaps.\n\n<b>Try these commands:</b>\n🍳 /recipes — Desi protein recipes\n💡 /tip — Random protein hack\n🔍 /ask paneer — Protein in any food\n🧠 /myth — Bust a myth\n👨‍👩‍👧 /parenttip — Convince parents\n📊 /log — Open tracker\n📅 /today — Today's tip\n\nKal subah se daily tips shuru! 🌅`, [
+  await sendWithButtons(chatId, `🙏 <b>Namaste ${name}!</b>\n\nWelcome to <b>Protein Ka Chakkar</b> 💪\n\nHar subah ek protein tip — desi recipes, facts, smart swaps.\n\n<b>Try these commands:</b>\n🍳 /recipes — 100 desi protein recipes\n🏷️ /products — Indian protein products guide\n💡 /tip — Random protein hack\n🔍 /ask paneer — Protein in any food\n🧠 /myth — Bust a myth\n👨‍👩‍👧 /parenttip — Convince parents\n📊 /log — Open tracker\n📅 /today — Today's tip\n\n<b>3 daily nudges:</b>\n🌅 8 AM — Daily protein tip\n☀️ 1 PM — Midday hack/quiz\n🌙 8 PM — Log your protein\n\nKal subah se shuru! 🌅`, [
     [{ text: "👥 Join Community", url: TG_GROUP }],
     [{ text: "📱 Protein Tracker", url: TRACKER_URL }],
   ]);
 }
 
 async function handleHelp(chatId) {
-  await sendMessage(chatId, `📋 <b>All Commands:</b>\n\n<b>Daily Course:</b>\n/today — Today's tip\n/day 15 — Specific day\n/progress — Your progress\n\n<b>Recipes & Tips:</b>\n/recipes — Recipe list\n/recipe 1 — Full recipe\n/tip — Random hack\n/parenttip — Tips for parents\n\n<b>Lookup:</b>\n/ask paneer — Protein check\n/ask chicken breast\n/ask maggi\n\n<b>Learn:</b>\n/myth — Bust a myth\n\n<b>Track & Share:</b>\n/log — Open tracker\n/share — Share with family\n/stop — Unsubscribe\n\n💬 Community: ${TG_GROUP}`);
+  await sendMessage(chatId, `📋 <b>All Commands:</b>\n\n<b>Daily Course:</b>\n/today — Today's tip\n/day 15 — Specific day\n/progress — Your progress\n\n<b>Recipes & Tips:</b>\n/recipes — 100 protein recipes\n/recipe 1 — Full recipe\n/tip — Random hack\n/parenttip — Tips for parents\n\n<b>Products & Lookup:</b>\n/products — Indian protein products guide\n/products milk — Protein milks\n/products bar — Protein bars\n/ask paneer — Protein check\n/ask maggi — Any food lookup\n\n<b>Learn:</b>\n/myth — Bust a myth\n\n<b>Track & Share:</b>\n/log — Open tracker\n/share — Share with family\n/stop — Unsubscribe\n\n💬 Community: ${TG_GROUP}`);
 }
 
 async function handleRecipes(chatId, page) {
@@ -376,6 +377,48 @@ async function handleParentTip(chatId) {
   await sendMessage(chatId, `${t}\n\n👨‍👩‍👧 Aur tips? /parenttip\n📤 Forward this to parents!`);
 }
 
+// === /products ===
+async function handleProducts(chatId, subcat) {
+  const cats = PRODUCTS.categories;
+  const items = PRODUCTS.items;
+
+  if (subcat && subcat !== "all") {
+    const cat = cats.find(c => c.id === subcat);
+    if (!cat) {
+      const catList = cats.map(c => `/products ${c.id}`).join("\n");
+      await sendMessage(chatId, `Category nahi mila. Try:\n\n${catList}`);
+      return;
+    }
+    const catItems = items.filter(i => i.cat === subcat);
+    let text = `${cat.emoji} <b>${cat.label}</b>\n\n`;
+    catItems.forEach((p, i) => {
+      const pricePerG = p.price ? `₹${(p.price / p.protein).toFixed(1)}/g` : "—";
+      text += `<b>${i+1}. ${p.brand} — ${p.name}</b>\n`;
+      text += `   💪 ${p.protein}g protein | 🔥 ${p.cal} cal | 💰 ₹${p.price || "?"}\n`;
+      text += `   📏 ${p.serving} | ${p.rating}\n`;
+      text += `   📊 Cost: ${pricePerG} protein\n`;
+      text += `   💬 ${p.verdict}\n\n`;
+    });
+    await sendMessage(chatId, text);
+    return;
+  }
+
+  // Overview
+  let text = `🏷️ <b>Indian Protein Products Guide</b>\n\n`;
+  text += `Real brands, real products, honest reviews.\n\n`;
+  for (const cat of cats) {
+    const catItems = items.filter(i => i.cat === cat.id);
+    const best = catItems.reduce((a, b) => (a.rating >= b.rating ? a : b), catItems[0]);
+    text += `${cat.emoji} <b>${cat.label}</b> (${catItems.length} products)\n`;
+    text += `   Top pick: ${best.brand} ${best.name}\n`;
+    text += `   → /products ${cat.id}\n\n`;
+  }
+  text += `<b>Total: ${items.length} products reviewed!</b>\n\n`;
+  text += `💡 Tip: /products milk — see all protein milk options\n`;
+  text += `🔍 /ask [brand name] — quick protein lookup`;
+  await sendMessage(chatId, text);
+}
+
 async function handleLog(chatId) {
   await sendWithButtons(chatId, `📊 <b>Protein Tracker</b>\n\nDaily protein track karo — 80+ Indian foods, calories, veg/non-veg filter.\n\nTap to open 👇`, [
     [{ text: "📱 Open Tracker", url: TRACKER_URL }],
@@ -431,6 +474,7 @@ async function handleWebhook(body) {
     if (text === "/stop") return handleStop(chatId);
     if (text === "/share") return handleShare(chatId);
     if (text === "/recipes" || text.startsWith("/recipes ")) return handleRecipes(chatId, text.split(" ")[1] || null);
+    if (text === "/products" || text.startsWith("/products ")) return handleProducts(chatId, text.split(" ")[1] || null);
     if (text === "/tip") return handleTip(chatId);
     if (text === "/myth") return handleMyth(chatId);
     if (text === "/parenttip") return handleParentTip(chatId);
@@ -443,7 +487,7 @@ async function handleWebhook(body) {
       const q = text.toLowerCase();
       if (Object.keys(PROTEIN_DB).find(k => k.includes(q) || q.includes(k))) return handleAsk(chatId, text);
     }
-    await sendMessage(chatId, `🙏 Try:\n🍳 /recipes\n💡 /tip\n🔍 /ask [food]\n🧠 /myth\n👨‍👩‍👧 /parenttip\n📊 /log\n📅 /today\n\n/help for all 💪`);
+    await sendMessage(chatId, `🙏 Try:\n🍳 /recipes\n🏷️ /products\n💡 /tip\n🔍 /ask [food]\n🧠 /myth\n👨‍👩‍👧 /parenttip\n📊 /log\n📅 /today\n\n/help for all 💪`);
   }
   if (body.callback_query) {
     await fetch(`${API}/answerCallbackQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ callback_query_id: body.callback_query.id }) });

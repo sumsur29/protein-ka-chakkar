@@ -2,8 +2,7 @@
   "name": "protein-ka-chakkar-bot",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "vercel dev"
-  },
-  "dependencies": {}
+  "dependencies": {
+    "redis": "^4.6.13"
+  }
 }

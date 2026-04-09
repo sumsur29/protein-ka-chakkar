@@ -24,9 +24,52 @@ async function sendMessage(chatId, text, opts = {}) {
 async function sendWithButtons(chatId, text, buttons) { return sendMessage(chatId, text, { reply_markup: { inline_keyboard: buttons } }); }
 
 // ============ STORAGE ============
+// ============ STORAGE (Redis via REDIS_URL) ============
 const subscribers = new Map();
-async function getSubscribers() { if (process.env.KV_REST_API_URL) { const { kv } = require("@vercel/kv"); return (await kv.get("subscribers")) || {}; } return Object.fromEntries(subscribers); }
-async function saveSubscribers(subs) { if (process.env.KV_REST_API_URL) { const { kv } = require("@vercel/kv"); await kv.set("subscribers", subs); return; } for (const [k, v] of Object.entries(subs)) subscribers.set(k, v); }
+let redisClient = null;
+
+async function getRedis() {
+  if (redisClient) return redisClient;
+  if (process.env.REDIS_URL || process.env.KV_REST_API_URL) {
+    try {
+      // Try @vercel/kv first (legacy KV)
+      if (process.env.KV_REST_API_URL) {
+        const { kv } = require("@vercel/kv");
+        redisClient = { type: "kv", kv };
+        return redisClient;
+      }
+      // Use @vercel/kv with REDIS_URL (new Redis)
+      if (process.env.REDIS_URL) {
+        const { createClient } = require("redis");
+        const client = createClient({ url: process.env.REDIS_URL });
+        await client.connect();
+        redisClient = { type: "redis", client };
+        return redisClient;
+      }
+    } catch (e) {
+      console.error("Redis init error:", e.message);
+    }
+  }
+  return null;
+}
+
+async function getSubscribers() {
+  const r = await getRedis();
+  if (r && r.type === "kv") { return (await r.kv.get("subscribers")) || {}; }
+  if (r && r.type === "redis") {
+    const data = await r.client.get("subscribers");
+    return data ? JSON.parse(data) : {};
+  }
+  return Object.fromEntries(subscribers);
+}
+
+async function saveSubscribers(subs) {
+  const r = await getRedis();
+  if (r && r.type === "kv") { await r.kv.set("subscribers", subs); return; }
+  if (r && r.type === "redis") { await r.client.set("subscribers", JSON.stringify(subs)); return; }
+  for (const [k, v] of Object.entries(subs)) subscribers.set(k, v);
+}
+
 async function getSubscriber(chatId) { const s = await getSubscribers(); return s[chatId] || null; }
 async function upsertSubscriber(chatId, data) { const s = await getSubscribers(); s[chatId] = { ...(s[chatId] || {}), ...data }; await saveSubscribers(s); }
 
